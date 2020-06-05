@@ -3,15 +3,24 @@
 
 #include <stdint.h>
 #include <memory>
-// #include <Network/Socket.hpp>
+#include <vector>
+#include <Network/Socket.hpp>
 
 namespace Network
 {
     namespace Stream{
         class Server
         {
+            enum struct Error{
+                NO_ERROR,
+                CREATE_SOCKET_ERROR,
+                BIND_SOCKET_ERROR,
+                LISTEN_SOCKET_ERROR,
+                ACCEPT_SOCKET_ERROR
+
+            };
         public:
-            typedef void(*receiveHandler_t)(char*, size_t);
+            typedef void(*readDataDelegate_t)(char*, size_t);
 
             Server();
             ~Server();
@@ -20,12 +29,16 @@ namespace Network
             Server(Server &&) = delete;
             Server &operator=(Server &&) = delete;
 
-            void listen(uint16_t port);
-            void setReceiveHandler(receiveHandler_t);
+            bool listen(uint16_t port);
+            bool listen(std::string address, uint16_t port);
+            void setReceivedDataDelegate(readDataDelegate_t);
+            std::string getLastError();
         private:
-            uint16_t port;
-            receiveHandler_t receiveHandler;
-            // Socket socket;
+            Socket serverSocket;
+            std::vector<std::shared_ptr<Socket>> clients;
+            readDataDelegate_t receiveHandler;
+            Error error;
+
         };        
     } // namespace Stream
 } // namespace Network

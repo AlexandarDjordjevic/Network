@@ -89,6 +89,16 @@ namespace Network
         bool create();
 
         /**
+         * @brief This is the function for creating a socket
+         * 
+         * @param domain Socket domain
+         * @param type Socket domain
+         * @return true peration was successful
+         * @return false operation was unsuccessful
+         */
+        bool create(Domain domain, Type type);
+
+        /**
          * @brief This is the function for binding the socket
          * 
          * @param port Bind port number
@@ -146,7 +156,7 @@ namespace Network
          * @return true opearatio was successful
          * @return false operation was unsuccessful
          */
-        bool accept(Socket& client);
+        bool accept(Socket* client);
 
         /**
          * @brief This is the function for writing data(binary) on socket

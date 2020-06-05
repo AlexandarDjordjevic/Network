@@ -24,6 +24,12 @@ namespace Network
         return true;
     }
 
+    bool Socket::create(Domain domain, Type type){
+        this->domain = domain;
+        this->type = type;
+        return create();
+    }
+
     bool Socket::bind(uint16_t port, uint32_t address){
         if (fileDescriptor < 0) return false;
 
@@ -70,12 +76,12 @@ namespace Network
         return ::accept(fileDescriptor, NULL, NULL);
     }
 
-    bool Socket::accept(Socket& client){
+    bool Socket::accept(Socket* client){
         struct sockaddr_in cli;
         socklen_t len = 0;
-        client.fileDescriptor = ::accept(fileDescriptor, (struct sockaddr*)&cli, &len);
-        client.address = ntohl(cli.sin_addr.s_addr);
-        client.port= ntohs(cli.sin_port);
+        client->fileDescriptor = ::accept(fileDescriptor, (struct sockaddr*)&cli, &len);
+        client->address = ntohl(cli.sin_addr.s_addr);
+        client->port= ntohs(cli.sin_port);
     }
 
     bool Socket::write(const uint8_t* data, size_t length){
