@@ -11,7 +11,6 @@
 #include <fcntl.h>
 
 #define DEFAULT_CONNECTION_QUEUE_SIZE 10
-
 namespace Network
 {
     class Socket
@@ -168,7 +167,14 @@ namespace Network
          */       
         bool write(const std::string& data);
 
-        bool read();
+        /**
+         * @brief This is the function for reading data from socket
+         * 
+         * @param buffer Data storing buffer
+         * @param length Data buffer size
+         * @return size_t Number of stored data into data buffer
+         */
+        size_t read(uint8_t* buffer, size_t length);
 
         /**
          * @brief This function return socket file descriptor
@@ -217,7 +223,6 @@ namespace Network
         in_port_t port;
         Socket::Domain domain;
         Socket::Type type;
-
     };
     
 

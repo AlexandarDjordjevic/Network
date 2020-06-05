@@ -26,6 +26,8 @@ int main(){
     std::cout <<"Waiting for a clients ..." << std::endl;
     if(socket.accept(client)){
         std::cout << "Client " << client.getIp() << " connected" << std::endl;
+        uint8_t buffer[1024];
+        client.read(buffer, sizeof(buffer));
         client.write(std::string("Hello From Server!"));
     }else{
         std::cerr << "Accepting client failed" << std::endl;

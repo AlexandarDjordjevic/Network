@@ -89,6 +89,10 @@ namespace Network
         return write((const uint8_t*)(data.c_str()), data.length());
     }
 
+    size_t Socket::read(uint8_t* buffer, size_t length){
+        return ::read(fileDescriptor, buffer, length);
+    }
+
     int Socket::getDescriptor() const{
         return fileDescriptor;
     }
