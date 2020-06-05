@@ -17,8 +17,7 @@ namespace Network
         Client &operator=(Client &&) = delete;
 
     private:
-        struct impl;
-        std::unique_ptr<impl> pimpl;
+        
     };        
     } // namespace Stream
 } // namespace Network

@@ -4,25 +4,30 @@ set(this Network)
 
 project(${this})
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 11)
 
 set(Src 
+    src/Stream/Server.cpp
     src/Socket.cpp
+    main.cpp
 )
 
 set(Include 
     include/Network/Socket.hpp
+    include/Network/Stream/Server.hpp
 )
 
-add_library(${this} STATIC ${Src})
+add_executable(${this} ${Src})
 
-set_target_properties(${this} PROPERTIES
-    FOLDER Libraries
-)
+# add_library(${this} STATIC ${Src})
+
+# set_target_properties(${this} PROPERTIES
+#     FOLDER Libraries
+# )
 
 target_include_directories(${this} PUBLIC include)
 
-target_link_libraries(${this} pthread)
+# target_link_libraries(${this} pthread)
 
-add_subdirectory(tests)
+# add_subdirectory(tests)
 
