@@ -5,9 +5,9 @@ This is the simple network library with following implementations:
 2. [Stream](#2-stream)
    1. [Server](#21-server)
    2. [Client](#22-client)
-3. [Datagram]
-   1. [Server]
-   2. [Clinet]
+3. [Datagram](#3-datagram)
+   1. [Server](#31-server)
+   2. [Clinet](#32-client)
    
 ## 1. Sockets
 
@@ -34,11 +34,17 @@ socket.accept();
 
 ### 2.1 Server
 
-***
+---
 
 ### 2.2 Client
 
-***
+---
 
-## Datagram
+## 3. Datagram
 
+---
+
+### 3.1 Server
+
+
+### 3.2 Client
