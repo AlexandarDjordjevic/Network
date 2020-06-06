@@ -31,6 +31,7 @@ namespace Network
 
             bool listen(uint16_t port);
             bool listen(std::string address, uint16_t port);
+            void accept();
             void setReceivedDataDelegate(readDataDelegate_t);
             std::string getLastError();
         private:
@@ -38,6 +39,7 @@ namespace Network
             std::vector<std::shared_ptr<Socket>> clients;
             readDataDelegate_t receiveHandler;
             Error error;
+            bool run;
 
         };        
     } // namespace Stream

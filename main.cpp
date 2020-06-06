@@ -4,7 +4,9 @@
 
 int main(){
     Network::Stream::Server server;
-    server.listen(3000);
+    if(server.listen("192.168.0.108", 2000)){
+        server.accept();
+    } 
     std::cout << "Server error: " << server.getLastError() << std::endl;
     return 0;
 }

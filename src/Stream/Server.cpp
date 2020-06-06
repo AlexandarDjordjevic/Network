@@ -5,24 +5,29 @@ namespace Network
 {
     namespace Stream
     {
-        Server::Server(){
+        Server::Server()
+            : error(Error::NO_ERROR)
+        {
 
         }
+        
         Server::~Server(){
             
         }
 
         bool Server::listen(uint16_t port){
-            std::shared_ptr<Socket> newClient = 
-                                    std::make_shared<Socket>();
+            listen("0.0.0.0", port);
+        }
+
+        bool Server::listen(std::string address, uint16_t port){
             if (serverSocket.create(
-                Network::Socket::Domain::D_INET,
-                Network::Socket::Type::SOCK_STREAM
+                Socket::Domain::D_INET,
+                Socket::Type::SOCK_STREAM
             ) == false) {
                 error = Error::CREATE_SOCKET_ERROR;
                 return false;
             }
-            if (serverSocket.bind(port) == false) {
+            if (serverSocket.bind(address, port) == false) {
                 error = Error::BIND_SOCKET_ERROR;
                 return false;
             }
@@ -30,20 +35,25 @@ namespace Network
                 error = Error::LISTEN_SOCKET_ERROR;
                 return false;
             }
-            if (serverSocket.accept(newClient.get()) == true){
-                std::cout << "Adding new clinet to the clinets list" << std::endl;
-                clients.push_back(newClient);     
-            }else{
-                std::cout << "Fail to accept new client" << std::endl;
+            return true;
+        }
+
+        void Server::accept(){
+            run = true;
+            std::cout << "Server is running at: " 
+                      << serverSocket.getIp() << ":" 
+                      << serverSocket.getPort() << std::endl;
+            while(run){
+                auto newClient = std::make_shared<Socket>();
+                if (serverSocket.accept(newClient.get()) == true){
+                    std::cout << "Adding new clinet to the clinets list" << std::endl;
+                    clients.push_back(newClient);     
+                }else{
+                    std::cout << "Fail to accept new client" << std::endl;
+                }
             }
-           
         }
-
-        bool Server::listen(std::string address, uint16_t port){
-            if (serverSocket.create() == false) return false;
-            if (serverSocket.bind(port) == false) return false;
-
-        }
+        
 
         std::string Server::getLastError(){
             switch(error){
@@ -57,6 +67,7 @@ namespace Network
                     return "Fail to listen on socket";
                 case Error::ACCEPT_SOCKET_ERROR:
                     return "Fail to accept on socket";
+                default: return "Unknown error";
             }
         }
 

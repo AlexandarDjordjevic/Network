@@ -3,6 +3,8 @@
 
 namespace Network
 {
+    Socket::Socket() = default;
+
     Socket::Socket(int descriptor){
         fileDescriptor = descriptor;
     }
@@ -12,6 +14,7 @@ namespace Network
     {
         fileDescriptor = -1; //Invalid socket
     }   
+    
     Socket::~Socket(){
         shutdown();
         //TODO Add read before closing socket ... test if it is necessary read!
@@ -30,15 +33,14 @@ namespace Network
         return create();
     }
 
-    bool Socket::bind(uint16_t port, uint32_t address){
+    bool Socket::bind(const std::string& address, uint16_t port){
         if (fileDescriptor < 0) return false;
-
-        this->address = address;
+        struct sockaddr_in serv_addr;
+        inet_pton(int(domain), address.c_str(), &(this->address));
         this->port = port;
 
-        struct sockaddr_in serv_addr;
         serv_addr.sin_family = sa_family_t(domain);
-        serv_addr.sin_addr.s_addr = htonl(this->address);
+        serv_addr.sin_addr.s_addr = this->address;
         serv_addr.sin_port = htons(this->port); 
  
         auto result = ::bind(fileDescriptor, (struct sockaddr*)&serv_addr, sizeof(serv_addr)); 
@@ -47,7 +49,7 @@ namespace Network
     }   
 
     bool Socket::bind(uint16_t port){
-        return bind(port, INADDR_ANY);
+        return bind("0.0.0.0", port);
     }   
 
     bool Socket::listen(){
@@ -107,7 +109,7 @@ namespace Network
         char str[INET_ADDRSTRLEN] = {0};
         try{
             in_addr clientAdd;
-            clientAdd.s_addr = htonl(address);
+            clientAdd.s_addr = address;
             inet_ntop(AF_INET, &(clientAdd), str, INET_ADDRSTRLEN);
             return std::string(str);
         }catch(...){

@@ -71,7 +71,7 @@ namespace Network
             SOCK_STREAM
         };
 
-        Socket() = default;
+        Socket();
         Socket(int descriptor);
         Socket(Domain, Type);
         ~Socket();
@@ -106,7 +106,7 @@ namespace Network
          * @return true binding was successful
          * @return false binding was unsuccessful
          */
-        bool bind(uint16_t port, uint32_t address);
+        bool bind(const std::string& address, uint16_t port);
 
         /**
          * @brief This is the function for binding the socket to the address 0.0.0.0(INADDR_ANY)
