@@ -49,6 +49,28 @@ namespace Network
         return create();
     }
 
+    bool Socket::connect(const std::string& address, uint16_t port){
+        if (pimpl->fileDescriptor < 0) return false;
+        struct sockaddr_in serv_addr;
+        inet_pton(int(pimpl->domain), address.c_str(), &serv_addr.sin_addr);
+        return connect(ntohl(serv_addr.sin_addr.s_addr), port);
+    }
+
+    bool Socket::connect(uint32_t address, uint16_t port){
+        if (pimpl->fileDescriptor < 0) return false;
+        struct sockaddr_in serv_addr;
+        pimpl->address = address;
+        pimpl->port = port;
+        serv_addr.sin_family = sa_family_t(pimpl->domain);
+        serv_addr.sin_addr.s_addr = htonl(pimpl->address);
+        serv_addr.sin_port = htons(pimpl->port);
+        if (::connect(pimpl->fileDescriptor, (sockaddr*)&serv_addr, sizeof(serv_addr)) == -1) 
+        {
+            return false;
+        }
+        return true;
+    }
+
     bool Socket::bind(const std::string& address, uint16_t port){
         if (pimpl->fileDescriptor < 0) return false;
         struct sockaddr_in serv_addr;

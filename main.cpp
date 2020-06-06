@@ -46,6 +46,9 @@ int main(){
 
     aceptor.join();
     eventor.join();
+
+  
+    client.close();
     std::cout << "Done" << std::endl;
     return 0;
 }

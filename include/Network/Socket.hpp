@@ -101,6 +101,26 @@ namespace Network
         bool create(Domain domain, Type type);
 
         /**
+         * @brief This function is used to establish connection between two network nodes
+         * 
+         * @param address Remote node ip address
+         * @param port Remote node port
+         * @return true connected successfuly
+         * @return false fail to connect
+         */
+        bool connect(const std::string& address, uint16_t port);
+
+        /**
+         * @brief This function is used to establish connection between two network nodes
+         * 
+         * @param address Remote node ip address (numeric representation)
+         * @param port Remote node port
+         * @return true connected successfuly
+         * @return false fail to connect
+         */
+        bool connect(uint32_t address, uint16_t port);
+
+        /**
          * @brief This is the function for binding the socket
          * 
          * @param port Bind port number
