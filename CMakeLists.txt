@@ -9,11 +9,13 @@ set(CMAKE_CXX_STANDARD 11)
 set(Src 
     src/Stream/Server.cpp
     src/Socket.cpp
+    src/SocketEventManager.cpp
     main.cpp
 )
 
 set(Include 
     include/Network/Socket.hpp
+    include/Network/SocketEventManager.hpp
     include/Network/Stream/Server.hpp
 )
 
@@ -27,7 +29,7 @@ add_executable(${this} ${Src})
 
 target_include_directories(${this} PUBLIC include)
 
-# target_link_libraries(${this} pthread)
+target_link_libraries(${this} pthread)
 
 # add_subdirectory(tests)
 

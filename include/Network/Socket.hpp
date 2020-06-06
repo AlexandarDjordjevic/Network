@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <fcntl.h>
+#include <memory>
 
 #define DEFAULT_CONNECTION_QUEUE_SIZE 10
 namespace Network
@@ -70,6 +71,7 @@ namespace Network
             SOCK_DGRAM,
             SOCK_STREAM
         };
+        const static std::string ANY_ADDRES;
 
         Socket();
         Socket(int descriptor);
@@ -228,11 +230,8 @@ namespace Network
         void close();
 
     private:
-        int fileDescriptor;
-        uint32_t address;
-        in_port_t port;
-        Socket::Domain domain;
-        Socket::Type type;
+        struct impl;
+        std::unique_ptr<impl> pimpl;
     };
     
 
