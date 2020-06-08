@@ -70,8 +70,9 @@ namespace Network
         };
         enum struct Type
         {
-            SOCK_DGRAM,
-            SOCK_STREAM
+            SOCK_STREAM = 1,
+            SOCK_DGRAM = 2,
+            SOCK_RAW = 3
         };
         const static std::string ANY_ADDRES;
 
@@ -96,7 +97,7 @@ namespace Network
          * @brief This is the function for creating a socket
          * 
          * @param domain Socket domain
-         * @param type Socket domain
+         * @param type Socket type (Stream / Datagram)
          * @return true peration was successful
          * @return false Operation was unsuccessful
          */

@@ -4,6 +4,7 @@
 #include <Network/Socket.hpp>
 #include <Network/SocketEventManager.hpp>
 #include <Network/Stream/Client.hpp>
+#include <Network/Datagram/Client.hpp>
 
 Network::SocketEventManager eventManager;
 Network::Socket server, client;
@@ -57,8 +58,9 @@ int main()
     // client.close();
     // Network::Stream::Client client;
 
-    // std::string ip_address = "127.0.0.1";
-    // uint16_t port = 1234;
+
+    std::string ip_address = "192.168.0.108";
+    uint16_t port = 1234;
 
     // if (client.connect(ip_address, port))
     // {
@@ -69,7 +71,13 @@ int main()
     //     std::cout << "Fail to connect" << std::endl;
     // }
 
-    // client.write("Hello From Client\n");
+    Network::Datagram::Client udp_client;
+    
+    if (udp_client.write(ip_address, port, "Hello From Client\n")){
+        std::cout << "Success!" << std::endl;
+    }else{
+        std::cout << "Fail to write datagram!" << std::endl;
+    }
 
     // uint8_t message_buffer[1024] = {0};
 
