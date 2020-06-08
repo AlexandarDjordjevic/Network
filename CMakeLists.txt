@@ -7,16 +7,18 @@ project(${this})
 set(CMAKE_CXX_STANDARD 11)
 
 set(Src 
-    src/Stream/Server.cpp
+    main.cpp
     src/Socket.cpp
     src/SocketEventManager.cpp
-    main.cpp
+    src/Stream/Server.cpp
+    src/Stream/Client.cpp
 )
 
 set(Include 
     include/Network/Socket.hpp
     include/Network/SocketEventManager.hpp
     include/Network/Stream/Server.hpp
+    include/Network/Stream/Client.hpp
 )
 
 add_executable(${this} ${Src})

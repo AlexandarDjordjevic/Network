@@ -17,14 +17,15 @@ namespace Network
     class Socket
     {
     public:
-        enum struct Domain{
+        enum struct Domain
+        {
             D_UNSPEC,
             D_LOCAL = 1,
             D_UNIX = 1,
             D_FILE = 1,
-            D_INET = 2,	
-            D_AX25,	
-            D_IPX,	
+            D_INET = 2,
+            D_AX25,
+            D_IPX,
             D_APPLETALK,
             D_NETROM,
             D_BRIDGE,
@@ -67,7 +68,8 @@ namespace Network
             D_SMC,
             D_MAX,
         };
-        enum struct Type{
+        enum struct Type
+        {
             SOCK_DGRAM,
             SOCK_STREAM
         };
@@ -77,16 +79,16 @@ namespace Network
         Socket(int descriptor);
         Socket(Domain, Type);
         ~Socket();
-        Socket(const Socket&) = delete;
-        Socket& operator=(const Socket&) = delete;
-        Socket(Socket&&) = delete;
-        Socket& operator=(const Socket&&) = delete;
+        Socket(const Socket &) = delete;
+        Socket &operator=(const Socket &) = delete;
+        Socket(Socket &&) = delete;
+        Socket &operator=(const Socket &&) = delete;
 
         /**
          * @brief This is the function for creating the socket
          * 
-         * @return true if operation was successful
-         * @return false if operation was unsuccessful
+         * @return true if Operation was successful
+         * @return false if Operation was unsuccessful
          */
         bool create();
 
@@ -96,7 +98,7 @@ namespace Network
          * @param domain Socket domain
          * @param type Socket domain
          * @return true peration was successful
-         * @return false operation was unsuccessful
+         * @return false Operation was unsuccessful
          */
         bool create(Domain domain, Type type);
 
@@ -108,7 +110,7 @@ namespace Network
          * @return true connected successfuly
          * @return false fail to connect
          */
-        bool connect(const std::string& address, uint16_t port);
+        bool connect(const std::string &address, uint16_t port);
 
         /**
          * @brief This function is used to establish connection between two network nodes
@@ -128,7 +130,7 @@ namespace Network
          * @return true binding was successful
          * @return false binding was unsuccessful
          */
-        bool bind(const std::string& address, uint16_t port);
+        bool bind(const std::string &address, uint16_t port);
 
         /**
          * @brief This is the function for binding the socket to the address 0.0.0.0(INADDR_ANY)
@@ -142,8 +144,8 @@ namespace Network
         /**
          * @brief Set socket into listen state and ready to accept incoming connections.
          *        Maximum queue for incoming connection is default(10)
-         * @return true operation was successful
-         * @return false operation was unsuccessful
+         * @return true Operation was successful
+         * @return false Operation was unsuccessful
          */
         bool listen();
 
@@ -151,18 +153,19 @@ namespace Network
          * @brief Set socket into listen state and ready to accept incoming connections.
          *
          * @param backlog maximum length to which the queue of pending connections may grow.
-         * @return true operation was successful
-         * @return false operation was unsuccessful
+         * @return true Operation was successful
+         * @return false Operation was unsuccessful
          */
         bool listen(size_t backlog);
 
         /**
          * @brief Set the non blocking mode for the socket
          * 
-         * @return true operation was successful
-         * @return false operation was unsuccessful
+         * @param blocking Blocking flag
+         * @return true Operation was successful
+         * @return false Operation was unsuccessful
          */
-        bool setNonBlockingMode();
+        bool setBlockingMode(bool blocking);
 
         /**
          * @brief This is the function for acceptiong incoming connections
@@ -174,30 +177,30 @@ namespace Network
         /**
          * @brief This is the function for acceptiong incoming connections
          * 
-         * @param client object to capture socket data
-         * @return true opearatio was successful
-         * @return false operation was unsuccessful
+         * @param client Object to capture socket data
+         * @return true Opearation was successful
+         * @return false Operation was unsuccessful
          */
-        bool accept(Socket* client);
+        bool accept(Socket *client);
 
         /**
          * @brief This is the function for writing data(binary) on socket
          * 
-         * @param data data to be written
-         * @param length lenght of the data
-         * @return true writing data was successful
-         * @return false writing data was unsuccessful 
+         * @param data Data to be written
+         * @param length Lenght of the data
+         * @return true Operation was successful
+         * @return false Operation data was unsuccessful 
          */
-        bool write(const uint8_t* data, size_t length);
+        bool write(const uint8_t *data, size_t length);
 
-         /**
+        /**
          * @brief This is the function for writing string on socket
          * 
-         * @param data string to be written
-         * @return true writing data was successful
-         * @return false writing data was unsuccessful 
-         */       
-        bool write(const std::string& data);
+         * @param data String to be written
+         * @return true Operation data was successful
+         * @return false Operation data was unsuccessful 
+         */
+        bool write(const std::string &data);
 
         /**
          * @brief This is the function for reading data from socket
@@ -206,7 +209,7 @@ namespace Network
          * @param length Data buffer size
          * @return size_t Number of stored data into data buffer
          */
-        size_t read(uint8_t* buffer, size_t length);
+        size_t read(uint8_t *buffer, const size_t length);
 
         /**
          * @brief This function return socket file descriptor
@@ -253,7 +256,5 @@ namespace Network
         struct impl;
         std::unique_ptr<impl> pimpl;
     };
-    
 
-    
 } // namespace Network
