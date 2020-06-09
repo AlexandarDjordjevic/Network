@@ -6,15 +6,24 @@ namespace Network
 {
     namespace Datagram
     {
-        class Client{
+        class Client
+        {
         public:
             Client();
             ~Client();
-            Client(const Client&) = delete;
-            Client& operator=(const Client&) = delete;
-            Client(const Client&&) = delete;
-            Client& operator=(const Client&&) = delete;
-        
+            Client(const Client &) = delete;
+            Client &operator=(const Client &) = delete;
+            Client(const Client &&) = delete;
+            Client &operator=(const Client &&) = delete;
+
+            /**
+             * @brief This is the function for init datagram client
+             * 
+             * @return true Operation was successful
+             * @return false Operation was unsuccessful
+             */
+            bool init();
+
             /**
              * @brief This is the function for writing datagrams represented
              *        as string
@@ -25,7 +34,7 @@ namespace Network
              * @return true Operation was successful
              * @return false Operation was unsuccessful
              */
-            bool write(const std::string& ip_address, uint16_t port, const std::string& message);
+            bool write(const std::string &ip_address, uint16_t port, const std::string &message);
 
             /**
              * @brief This is the function for writing datagrams represented as
@@ -38,12 +47,12 @@ namespace Network
              * @return true Operatio was successful
              * @return false Operation was unsuccessful
              */
-            bool write(const std::string& ip_address, uint16_t port, const char* message, size_t message_length);
+            bool write(const std::string &ip_address, uint16_t port, const char *message, size_t message_length);
 
         private:
             struct impl;
             std::unique_ptr<impl> pimpl;
         };
     } // namespace Datagram
-    
+
 } // namespace Network

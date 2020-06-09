@@ -12,6 +12,7 @@ set(Src
     src/SocketEventManager.cpp
     src/Stream/Server.cpp
     src/Stream/Client.cpp
+    src/Datagram/Server.cpp
     src/Datagram/Client.cpp
 )
 
@@ -20,6 +21,7 @@ set(Include
     include/Network/SocketEventManager.hpp
     include/Network/Stream/Server.hpp
     include/Network/Stream/Client.hpp
+    include/Network/Datagram/Server.hpp
     include/Network/Datagram/Client.hpp
 )
 

@@ -170,6 +170,19 @@ namespace Network
         return ::read(pimpl->fileDescriptor, buffer, length);
     }
 
+    size_t Socket::receiveFrom(uint8_t *buffer, const size_t length, Socket *client)
+    {
+        struct sockaddr_in cli;
+        socklen_t len = 0;
+        auto recived_len = ::recvfrom(pimpl->fileDescriptor, buffer, length, 0, (struct sockaddr *)&cli, &len);
+        if (client != nullptr)
+        {
+            client->pimpl->address = cli.sin_addr.s_addr;
+            client->pimpl->port = cli.sin_port;
+        }
+        return recived_len;
+    }
+
     int Socket::getDescriptor() const
     {
         return pimpl->fileDescriptor;

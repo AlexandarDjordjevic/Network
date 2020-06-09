@@ -213,6 +213,15 @@ namespace Network
         size_t read(uint8_t *buffer, const size_t length);
 
         /**
+         * @brief This funciton shall receive message frome remote node.
+         * 
+         * @param buffer This is the buffer for storing message
+         * @param length This is the buffer length
+         * @return size_t Number of received bytes
+         */
+        size_t receiveFrom(uint8_t *buffer, const size_t length, Socket *socket);
+
+        /**
          * @brief This function return socket file descriptor
          * 
          * @return int socket file descriptor

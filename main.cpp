@@ -5,6 +5,7 @@
 #include <Network/SocketEventManager.hpp>
 #include <Network/Stream/Client.hpp>
 #include <Network/Datagram/Client.hpp>
+#include <Network/Datagram/Server.hpp>
 
 Network::SocketEventManager eventManager;
 Network::Socket server, client;
@@ -44,6 +45,11 @@ void eventManagerTask()
     }
 }
 
+void callMeOnDataReceived(uint8_t *data, size_t length)
+{
+    std::cout << "Received length: " << length << " Received message: " << data << std::endl;
+}
+
 #include <thread>
 
 int main()
@@ -58,8 +64,7 @@ int main()
     // client.close();
     // Network::Stream::Client client;
 
-
-    std::string ip_address = "192.168.0.108";
+    std::string ip_address = "192.168.100.50";
     uint16_t port = 1234;
 
     // if (client.connect(ip_address, port))
@@ -71,13 +76,24 @@ int main()
     //     std::cout << "Fail to connect" << std::endl;
     // }
 
-    Network::Datagram::Client udp_client;
-    
-    if (udp_client.write(ip_address, port, "Hello From Client\n")){
-        std::cout << "Success!" << std::endl;
-    }else{
-        std::cout << "Fail to write datagram!" << std::endl;
+    Network::Datagram::Server udp_server;
+    udp_server.setDataReceiveDelegate(callMeOnDataReceived);
+    if (udp_server.startReceive(1234))
+    {
+        std::cout << "Listening on port 1234 for incoming data." << std::endl;
     }
+    udp_server.run();
+
+    uint16_t finish;
+    std::cin >> finish;
+    // if (udp_server.l)
+    // {
+    //     std::cout << "Success!" << std::endl;
+    // }
+    // else
+    // {
+    //     std::cout << "Fail to write datagram!" << std::endl;
+    // }
 
     // uint8_t message_buffer[1024] = {0};
 
