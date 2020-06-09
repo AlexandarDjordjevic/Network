@@ -15,9 +15,9 @@ void dataReceivedHandler(int sockFd, uint8_t *buffer, size_t len)
     std::cout << "Message received. Len: " << len << " Data: " << buffer << std::endl;
 }
 
-void socketDisconnectHandler(int socketFd, uint32_t reson)
+void socketDisconnectHandler(int socketFd, uint32_t reason)
 {
-    std::cout << "Socket " << socketFd << " disconnected. Reason: " << reson << std::endl;
+    std::cout << "Socket " << socketFd << " disconnected. Reason: " << reason << std::endl;
 }
 
 
