@@ -5,7 +5,7 @@
 #include <vector>
 #include <mutex>
 #include <Network/Socket.hpp>
-
+#include <Network/Stream/Client.hpp>
 
 #include <iostream>
 namespace Network
@@ -50,11 +50,14 @@ namespace Network
              */
             bool listen(std::string address, uint16_t port);
 
-
+            /**
+             * @brief This function is used to accept incoming connections
+             * 
+             */
             void accept();
-            void enqueClient(const std::shared_ptr <Socket> client);
+            void enqueClient(const std::shared_ptr <Client> client);
             void setReceivedDataDelegate(readDataDelegate_t);
-            void eventManager();
+            bool eventManager();
             
             /**
              * @brief This function is used to get last server error description
@@ -63,12 +66,8 @@ namespace Network
              */
             std::string getLastError();
         private:
-            Socket serverSocket;
-            std::vector<std::shared_ptr<Socket>> clients;
-            readDataDelegate_t receiveHandler;
-            Error error;
-            bool run;
-            std::mutex clientListMutex;
+            struct impl;
+            std::unique_ptr<impl> pimpl;
 
         };        
     } // namespace Stream

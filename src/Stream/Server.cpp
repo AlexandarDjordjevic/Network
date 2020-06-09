@@ -1,13 +1,23 @@
 #include <Network/Stream/Server.hpp>
+#include <Network/SocketEventManager.hpp>
 
-#include <sys/epoll.h>
 namespace Network
 {
     namespace Stream
     {
+        struct Server::impl{
+            std::vector<std::shared_ptr<Client>> clients;
+            Socket serverSocket;
+            readDataDelegate_t receiveHandler;
+            Error error;
+            bool run;
+            std::mutex clientListMutex;
+            SocketEventManager socketEventLoop;
+        };
         Server::Server()
-            : error(Error::NO_ERROR)
+            : pimpl(new Server::impl)
         {
+            pimpl->error = Error::NO_ERROR;
         }
 
         Server::~Server()
@@ -21,45 +31,45 @@ namespace Network
 
         bool Server::listen(std::string address, uint16_t port)
         {
-            if (serverSocket.create(
+            if (pimpl->serverSocket.create(
                     Socket::Domain::D_INET,
                     Socket::Type::SOCK_STREAM) == false)
             {
-                error = Error::CREATE_SOCKET_ERROR;
+                pimpl->error = Error::CREATE_SOCKET_ERROR;
                 return false;
             }
-            if (serverSocket.bind(address, port) == false)
+            if (pimpl->serverSocket.bind(address, port) == false)
             {
-                error = Error::BIND_SOCKET_ERROR;
+                pimpl->error = Error::BIND_SOCKET_ERROR;
                 return false;
             }
-            if (serverSocket.listen() == false)
+            if (pimpl->serverSocket.listen() == false)
             {
-                error = Error::LISTEN_SOCKET_ERROR;
+                pimpl->error = Error::LISTEN_SOCKET_ERROR;
                 return false;
             }
             return true;
         }
 
-        void Server::enqueClient(const std::shared_ptr<Socket> client)
+        void Server::enqueClient(const std::shared_ptr<Client> client)
         {
-            std::unique_lock<std::mutex> lock(clientListMutex);
-            clients.push_back(client);
+            std::unique_lock<std::mutex> lock(pimpl->clientListMutex);
+            pimpl->clients.push_back(client);
         }
 
         void Server::accept()
         {
-            run = true;
+            pimpl->run = true;
             std::cout << "Server is running at: "
-                      << serverSocket.getIp() << ":"
-                      << serverSocket.getPort() << std::endl;
-            while (run)
+                      << pimpl->serverSocket.getIp() << ":"
+                      << pimpl->serverSocket.getPort() << std::endl;
+            while (pimpl->run)
             {
-                auto newClient = std::make_shared<Socket>();
-                if (serverSocket.accept(newClient.get()) == true)
+                auto newClient = std::make_shared<Client>();
+                if (pimpl->serverSocket.accept(newClient->getSocket()) == true)
                 {
                     std::cout << "Adding new clinet to the clinets list" << std::endl;
-                    clients.push_back(newClient);
+                    enqueClient(newClient);
                 }
                 else
                 {
@@ -68,13 +78,15 @@ namespace Network
             }
         }
 
-        void Server::eventManager()
+        bool Server::eventManager()
         {
+            if (pimpl->socketEventLoop.create() == false) return false;
+            pimpl->socketEventLoop.eventLoop();
         }
 
         std::string Server::getLastError()
         {
-            switch (error)
+            switch (pimpl->error)
             {
             case Error::NO_ERROR:
                 return "No error";
@@ -93,7 +105,7 @@ namespace Network
 
         void Server::setReceivedDataDelegate(readDataDelegate_t handler)
         {
-            receiveHandler = handler;
+            pimpl->receiveHandler = handler;
         }
     } // namespace Stream
 

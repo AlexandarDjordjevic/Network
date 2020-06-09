@@ -1,10 +1,13 @@
 #include <Network/SocketEventManager.hpp>
 #include <unordered_map>
-
+#include <mutex>
+#include <thread>
 namespace Network
 {
     static const int INVALID_FD = -1;
     struct SocketEventManager::impl{
+        bool run;
+        std::mutex runMutex;
         int monitor_fd = INVALID_FD;
         dataRecivedDelegate_t dataReceivedDelegate;
         disconnectDelegate_t disconnectDelegate;
@@ -15,7 +18,7 @@ namespace Network
     SocketEventManager::SocketEventManager()
         : pimpl(new SocketEventManager::impl())
     {
-        
+        pimpl->run = true;
     }
     SocketEventManager::~SocketEventManager() = default;
 
@@ -49,8 +52,13 @@ namespace Network
         return true;
     }
 
+    void SocketEventManager::stop(){
+        std::lock_guard<std::mutex> lock(pimpl->runMutex);
+        pimpl->run = false;
+    }
+
     void SocketEventManager::eventLoop(){
-        while(true){
+        while(pimpl->run){
             auto eventNumber = epoll_wait(pimpl->monitor_fd, pimpl->events, pimpl->max_events, -1); 
             if (eventNumber == -1){
                 //Error epoll_wait ... What to do with this?

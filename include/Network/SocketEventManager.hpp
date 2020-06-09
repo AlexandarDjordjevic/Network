@@ -51,6 +51,12 @@ namespace Network
         void eventLoop();
 
         /**
+         * @brief This function is used to stom main event loop
+         * 
+         */
+        void stop();
+
+        /**
          * @brief Set the data received delegate
          * 
          * @param dataRecivedDelegate_t delegate for received data

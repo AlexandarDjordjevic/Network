@@ -91,6 +91,27 @@ client.disconnect();
 ### 3.1 Server
 
 
+
+#### Example
+
+```cpp
+//callback function
+void callMeOnDataReceived(uint8_t *data, size_t length)
+{
+    std::cout << "Received length: " << length << " Received message: " << data << std::endl;
+}
+
+Network::Datagram::Server udp_server;
+udp_server.setDataReceiveDelegate(callMeOnDataReceived);
+if (udp_server.startReceive(1234))
+{
+   std::cout << "Listening on port 1234 for incoming data." << std::endl;
+}
+udp_server.run();
+```
+
+---
+
 ### 3.2 Client
 
 ---

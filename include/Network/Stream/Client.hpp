@@ -57,7 +57,7 @@ namespace Network
              * 
              * @param message_buffer Buffer to store incoming data
              * @param buffer_size Buffer size
-             * @return size_t Number of received bytes
+             * @return size_t Number of received bytes. If client is disconnected return -1
              */
             size_t read(uint8_t *message_buffer, size_t buffer_size);
 
@@ -70,6 +70,12 @@ namespace Network
              */
             bool setBlockingMode(bool blocking);
 
+            /**
+             * @brief This is the function for returning clients socket pointer
+             * 
+             * @return Socket* Pointer to the clients socket
+             */
+            Socket* getSocket();
         private:
             struct impl;
             std::unique_ptr<impl> pimpl;

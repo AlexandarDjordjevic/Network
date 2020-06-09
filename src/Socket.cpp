@@ -53,6 +53,15 @@ namespace Network
         return create();
     }
 
+    void Socket::setPort(uint16_t port){
+        pimpl->port = port;
+    }
+
+    uint16_t Socket::getPort()
+    {
+        return pimpl->port;
+    }
+
     bool Socket::connect(const std::string &address, uint16_t port)
     {
         if (pimpl->fileDescriptor < 0)
@@ -207,11 +216,6 @@ namespace Network
     uint32_t Socket::getIpNumeric()
     {
         return pimpl->address;
-    }
-
-    uint16_t Socket::getPort()
-    {
-        return pimpl->port;
     }
 
     void Socket::shutdown()

@@ -104,6 +104,20 @@ namespace Network
         bool create(Domain domain, Type type);
 
         /**
+         * @brief Set the port
+         * 
+         * @param port Port number
+         */
+        void setPort(uint16_t port);
+
+        /**
+         * @brief This function return socket port number
+         * 
+         * @return uint16_t port number
+         */
+        uint16_t getPort();
+
+        /**
          * @brief This function is used to establish connection between two network nodes
          * 
          * @param address Remote node ip address
@@ -241,13 +255,6 @@ namespace Network
          * @return uint32_t address value
          */
         uint32_t getIpNumeric();
-
-        /**
-         * @brief This function return socket port number
-         * 
-         * @return uint16_t port number
-         */
-        uint16_t getPort();
 
         /**
          * @brief This function will cause all or part of a full-duplex connection on the
