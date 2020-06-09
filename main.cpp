@@ -20,39 +20,16 @@ void socketDisconnectHandler(int socketFd, uint32_t reson)
     std::cout << "Socket " << socketFd << " disconnected. Reason: " << reson << std::endl;
 }
 
-void serverTask()
-{
-    server.create(Network::Socket::Domain::D_INET,
-                  Network::Socket::Type::SOCK_STREAM);
-    server.bind(1234);
-    server.listen();
-    while (true)
-    {
-        if (server.accept(&client))
-            eventManager.addSocketForMonitoring(client);
-    }
-}
-
-void eventManagerTask()
-{
-    eventManager.create();
-    eventManager.setDataReceivedDelegate(dataReceivedHandler);
-    eventManager.setDisconnectDelegate(socketDisconnectHandler);
-    std::cout << "Entering event loop" << std::endl;
-    while (true)
-    {
-        eventManager.eventLoop();
-    }
-}
-
 
 #include <thread>
 
 int main()
 {
+    Network::Stream::Server server;
+    server.listen(1234);
 
-    std::thread aceptor(serverTask);
-    std::thread eventManger(eventManagerTask);
+    std::thread aceptor(&Network::Stream::Server::accept, &server);
+    std::thread eventManger(&Network::Stream::Server::eventManager, &server);
 
     aceptor.join();
     eventManger.join();
