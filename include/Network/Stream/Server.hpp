@@ -6,14 +6,17 @@
 #include <mutex>
 #include <Network/Socket.hpp>
 #include <Network/Stream/Client.hpp>
+#include <Network/SocketEventManager.hpp>
 
 #include <iostream>
 namespace Network
 {
-    namespace Stream{
+    namespace Stream
+    {
         class Server
         {
-            enum struct Error{
+            enum struct Error
+            {
                 NO_ERROR,
                 CREATE_SOCKET_ERROR,
                 BIND_SOCKET_ERROR,
@@ -21,9 +24,8 @@ namespace Network
                 ACCEPT_SOCKET_ERROR
 
             };
-        public:
-            typedef void(*readDataDelegate_t)(char*, size_t);
 
+        public:
             Server();
             ~Server();
             Server(const Server &) = delete;
@@ -55,20 +57,20 @@ namespace Network
              * 
              */
             void accept();
-            void enqueClient(const std::shared_ptr <Client> client);
-            void setReceivedDataDelegate(readDataDelegate_t);
+            void enqueClient(const std::shared_ptr<Client> &client);
+            void setReceivedDataDelegate(SocketEventManager::dataReceiveDelegate_t);
             bool eventManager();
-            
+            void dataReceived(int socket_fd, uint8_t *data, size_t len);
             /**
              * @brief This function is used to get last server error description
              * 
              * @return std::string error description
              */
             std::string getLastError();
+
         private:
             struct impl;
             std::unique_ptr<impl> pimpl;
-
-        };        
+        };
     } // namespace Stream
 } // namespace Network

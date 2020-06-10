@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include <memory>
 #include <sys/epoll.h>
@@ -6,18 +6,18 @@
 
 namespace Network
 {
-    class SocketEventManager{
+    class SocketEventManager
+    {
     public:
-
-        typedef void(*dataRecivedDelegate_t)(int fd, uint8_t * data, size_t len);
-        typedef void(*disconnectDelegate_t)(int fd, uint32_t reason);
+        typedef std::function<void(int, uint8_t *, size_t)> dataReceiveDelegate_t;
+        typedef std::function<void(int, uint32_t)> disconnectDelegate_t;
 
         SocketEventManager();
         ~SocketEventManager();
-        SocketEventManager(const SocketEventManager&) = delete;
-        SocketEventManager& operator=(const SocketEventManager&) = delete;
-        SocketEventManager(const SocketEventManager&&) = delete;
-        SocketEventManager& operator=(const SocketEventManager&&) = delete;
+        SocketEventManager(const SocketEventManager &) = delete;
+        SocketEventManager &operator=(const SocketEventManager &) = delete;
+        SocketEventManager(const SocketEventManager &&) = delete;
+        SocketEventManager &operator=(const SocketEventManager &&) = delete;
 
         /**
          * @brief This function is used to crate event monitor instance
@@ -34,7 +34,7 @@ namespace Network
          * @return true operation was successful
          * @return false operation was unsuccessful
          */
-        bool addSocketForMonitoring(Socket& socket);
+        bool addSocketForMonitoring(Socket &socket);
 
         /**
          * @brief This function is used to remove socket from the list of monitored sockets
@@ -61,13 +61,14 @@ namespace Network
          * 
          * @param dataRecivedDelegate_t delegate for received data
          */
-        void setDataReceivedDelegate(dataRecivedDelegate_t);
+        void setDataReceivedDelegate(dataReceiveDelegate_t);
 
         /**
          * @brief Set the disconnect delegate
          * 
          */
         void setDisconnectDelegate(disconnectDelegate_t);
+
     private:
         struct impl;
         std::unique_ptr<impl> pimpl;

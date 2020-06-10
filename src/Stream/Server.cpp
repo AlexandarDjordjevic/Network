@@ -1,14 +1,17 @@
 #include <Network/Stream/Server.hpp>
 #include <Network/SocketEventManager.hpp>
 
+#include <algorithm>
+#include <functional>
 namespace Network
 {
     namespace Stream
     {
-        struct Server::impl{
+        struct Server::impl
+        {
             std::vector<std::shared_ptr<Client>> clients;
             Socket serverSocket;
-            readDataDelegate_t receiveHandler;
+            SocketEventManager::dataReceiveDelegate_t dataReceiveHandler;
             Error error;
             bool run;
             std::mutex clientListMutex;
@@ -51,7 +54,7 @@ namespace Network
             return true;
         }
 
-        void Server::enqueClient(const std::shared_ptr<Client> client)
+        void Server::enqueClient(const std::shared_ptr<Client> &client)
         {
             std::unique_lock<std::mutex> lock(pimpl->clientListMutex);
             pimpl->clients.push_back(client);
@@ -77,10 +80,22 @@ namespace Network
                 }
             }
         }
+        void Server::dataReceived(int socket_fd, uint8_t *data, size_t len)
+        {
+            auto client = std::find_if(
+                std::begin(pimpl->clients),
+                std::end(pimpl->clients),
+                [socket_fd](std::shared_ptr<Client> client) {
+                    return socket_fd == client->getSocket()->getDescriptor();
+                });
+        }
 
+        //void(*disconnectDelegate_t)(int fd, uint32_t reason);
         bool Server::eventManager()
         {
-            if (pimpl->socketEventLoop.create() == false) return false;
+            if (pimpl->socketEventLoop.create() == false)
+                return false;
+            pimpl->socketEventLoop.setDataReceivedDelegate(dataReceived);
             pimpl->socketEventLoop.eventLoop();
         }
 
@@ -103,9 +118,9 @@ namespace Network
             }
         }
 
-        void Server::setReceivedDataDelegate(readDataDelegate_t handler)
+        void Server::setReceivedDataDelegate(SocketEventManager::dataReceiveDelegate_t handler)
         {
-            pimpl->receiveHandler = handler;
+            pimpl->dataReceiveHandler = handler;
         }
     } // namespace Stream
 
