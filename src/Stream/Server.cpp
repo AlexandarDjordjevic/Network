@@ -56,7 +56,7 @@ namespace Network
             return true;
         }
 
-        void Server::enqueClient(const std::shared_ptr<Client> &client)
+        void Server::enqueueClient(const std::shared_ptr<Client> &client)
         {
             std::unique_lock<std::mutex> lock(pimpl->clientListMutex);
             pimpl->clients.push_back(client);
@@ -75,7 +75,7 @@ namespace Network
                 if (pimpl->serverSocket.accept(newClient->getSocket()) == true)
                 {
                     std::cout << "[Server] New Client Connected! IP: " << newClient->getSocket()->getIp() << std::endl;
-                    enqueClient(newClient);
+                    enqueueClient(newClient);
                 }
                 else
                 {

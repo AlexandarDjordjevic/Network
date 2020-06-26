@@ -57,10 +57,45 @@ namespace Network
              * 
              */
             void accept();
-            void enqueClient(const std::shared_ptr<Client> &client);
-            void setReceivedDataDelegate(SocketEventManager::dataReceiveDelegate_t);
-            void setClientDisconnectedDelegate(SocketEventManager::disconnectDelegate_t);
+
+            /**
+             * @brief This function is used to enqueue clients
+             * 
+             * @param client 
+             */
+            void enqueueClient(const std::shared_ptr<Client> &client);
+
+            /**
+             * @brief[IN] This is servers main event loop
+             * 
+             * @return True on success, False on error 
+             */
             bool eventManager();
+
+            /**
+             * @brief This function is used to get last server error description
+             * 
+             * @return std::string error description
+             */
+            std::string getLastError();
+
+        private:
+            /**
+             * @brief Set the Received Data Delegate object
+             * TODO: Is this really necessary? Check relation between SocketEventManager
+             *       and Server
+             * 
+             */
+            void setReceivedDataDelegate(SocketEventManager::dataReceiveDelegate_t);
+
+            /**
+             * @brief Set the Client Disconnected Delegate object
+             * TODO: Is this really necessary? Check relation between SocketEventManager
+             *       and Server
+             * 
+             */
+            void setClientDisconnectedDelegate(SocketEventManager::disconnectDelegate_t);
+
             /**
              * @brief This function is called when server receive data
              * 
@@ -77,13 +112,6 @@ namespace Network
              * @param reason Disconnect reason
              */
             void clientDisconnected(int socket_fd, uint32_t reason);
-
-            /**
-             * @brief This function is used to get last server error description
-             * 
-             * @return std::string error description
-             */
-            std::string getLastError();
 
         private:
             struct impl;

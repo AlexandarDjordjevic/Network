@@ -28,10 +28,10 @@ int main()
     Network::Stream::Server server;
     server.listen(1234);
 
-    std::thread aceptor(&Network::Stream::Server::accept, &server);
+    std::thread acceptor(&Network::Stream::Server::accept, &server);
     std::thread eventManger(&Network::Stream::Server::eventManager, &server);
 
-    aceptor.join();
+    acceptor.join();
     eventManger.join();
 
     std::cout
