@@ -59,8 +59,25 @@ namespace Network
             void accept();
             void enqueClient(const std::shared_ptr<Client> &client);
             void setReceivedDataDelegate(SocketEventManager::dataReceiveDelegate_t);
+            void setClientDisconnectedDelegate(SocketEventManager::disconnectDelegate_t);
             bool eventManager();
+            /**
+             * @brief This function is called when server receive data
+             * 
+             * @param socket_fd Socket File Descriptor
+             * @param data Data received
+             * @param len Data length
+             */
             void dataReceived(int socket_fd, uint8_t *data, size_t len);
+
+            /**
+             * @brief This function is called whenever client disconnects
+             * 
+             * @param socket_fd Disconnected client socker file descriptor
+             * @param reason Disconnect reason
+             */
+            void clientDisconnected(int socket_fd, uint32_t reason);
+
             /**
              * @brief This function is used to get last server error description
              * 

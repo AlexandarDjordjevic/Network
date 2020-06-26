@@ -3,6 +3,7 @@
 #include <memory>
 #include <sys/epoll.h>
 #include <Network/Socket.hpp>
+#include <functional>
 
 namespace Network
 {

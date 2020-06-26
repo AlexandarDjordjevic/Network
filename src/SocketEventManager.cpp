@@ -2,6 +2,7 @@
 #include <unordered_map>
 #include <mutex>
 #include <thread>
+
 namespace Network
 {
     static const int INVALID_FD = -1;
@@ -44,7 +45,7 @@ namespace Network
     bool SocketEventManager::addSocketForMonitoring(Socket &socket)
     {
         struct epoll_event ev;
-        ev.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLOUT | EPOLLERR;
+        ev.events = EPOLLIN | EPOLLRDHUP | EPOLLHUP | EPOLLERR;
         ev.data.fd = socket.getDescriptor();
         if (epoll_ctl(pimpl->monitor_fd, EPOLL_CTL_ADD, socket.getDescriptor(), &ev) == -1)
         {

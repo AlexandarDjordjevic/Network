@@ -12,11 +12,13 @@ namespace Network
             std::vector<std::shared_ptr<Client>> clients;
             Socket serverSocket;
             SocketEventManager::dataReceiveDelegate_t dataReceiveHandler;
+            SocketEventManager::disconnectDelegate_t clientDisconnectedHandler;
             Error error;
             bool run;
             std::mutex clientListMutex;
             SocketEventManager socketEventLoop;
         };
+        
         Server::Server()
             : pimpl(new Server::impl)
         {
@@ -58,12 +60,13 @@ namespace Network
         {
             std::unique_lock<std::mutex> lock(pimpl->clientListMutex);
             pimpl->clients.push_back(client);
+            pimpl->socketEventLoop.addSocketForMonitoring(*(client->getSocket()));
         }
 
         void Server::accept()
         {
             pimpl->run = true;
-            std::cout << "Server is running at: "
+            std::cout << "[Server] Running at: "
                       << pimpl->serverSocket.getIp() << ":"
                       << pimpl->serverSocket.getPort() << std::endl;
             while (pimpl->run)
@@ -71,7 +74,7 @@ namespace Network
                 auto newClient = std::make_shared<Client>();
                 if (pimpl->serverSocket.accept(newClient->getSocket()) == true)
                 {
-                    std::cout << "Adding new clinet to the clinets list" << std::endl;
+                    std::cout << "[Server] New Client Connected! IP: " << newClient->getSocket()->getIp() << std::endl;
                     enqueClient(newClient);
                 }
                 else
@@ -80,6 +83,7 @@ namespace Network
                 }
             }
         }
+
         void Server::dataReceived(int socket_fd, uint8_t *data, size_t len)
         {
             auto client = std::find_if(
@@ -88,14 +92,38 @@ namespace Network
                 [socket_fd](std::shared_ptr<Client> client) {
                     return socket_fd == client->getSocket()->getDescriptor();
                 });
+            std::cout << "[Server] Data received: " << data << std::endl;
         }
 
-        //void(*disconnectDelegate_t)(int fd, uint32_t reason);
+        void Server::clientDisconnected(int socket_fd, uint32_t reason){
+            /* Suppress warrning */
+            (void)reason;
+            for(auto client = pimpl->clients.begin(); client < pimpl->clients.end(); ++client){
+                if ((*client)->getSocket()->getDescriptor() == socket_fd){
+                    std::cout << "[Server] Client Disconnected. IP: " 
+                              << (*client)->getSocket()->getIp() 
+                              << std::endl;
+                    pimpl->socketEventLoop.removeSocketFromMonitoring(socket_fd);
+                    pimpl->clients.erase(client);
+                    return;
+                }
+            }       
+        }
+
         bool Server::eventManager()
         {
             if (pimpl->socketEventLoop.create() == false)
                 return false;
-            pimpl->socketEventLoop.setDataReceivedDelegate(dataReceived);
+
+            /* Set data received callback */
+            auto dataCb = std::bind(&Server::dataReceived, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+            pimpl->socketEventLoop.setDataReceivedDelegate(dataCb);
+
+            /* Set client disconnect callback */
+            auto discCb = std::bind(&Server::clientDisconnected, this, std::placeholders::_1, std::placeholders::_2);
+            pimpl->socketEventLoop.setDisconnectDelegate(discCb);
+
+            /* Start event loop */
             pimpl->socketEventLoop.eventLoop();
         }
 
@@ -121,6 +149,10 @@ namespace Network
         void Server::setReceivedDataDelegate(SocketEventManager::dataReceiveDelegate_t handler)
         {
             pimpl->dataReceiveHandler = handler;
+        }
+
+        void Server::setClientDisconnectedDelegate(SocketEventManager::disconnectDelegate_t handler){
+            pimpl->clientDisconnectedHandler = handler;
         }
     } // namespace Stream
 
